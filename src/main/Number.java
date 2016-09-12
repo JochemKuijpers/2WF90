@@ -148,6 +148,18 @@ public class Number {
 		}
 		return absLarger ^ negative;
 	}
+	
+	/**
+	 * Adds a d number of zeros, shifting the number a d number to the left
+	 * @param d
+	 */
+	public Number shiftToLeft(int d){
+		//shifting is for free, so no additions counted
+		
+		int[] shiftedWords = new int[words.length + d];
+		System.arraycopy(words, 0, shiftedWords, d, words.length);
+		return new Number(base, shiftedWords, negative);
+	}
 
 	/**
 	 * String representation of the Number

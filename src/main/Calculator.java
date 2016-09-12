@@ -1,5 +1,7 @@
 package main;
 
+import java.util.Arrays;
+
 public class Calculator {
 
 	private int add, sub, mul;
@@ -145,9 +147,74 @@ public class Calculator {
 	 * @return The answer of the product a * b
 	 */
 	public Number mulKaratsuba(Number a, Number b) {
-		return Number.fromString(a.getBase(), "0");
+		
+		
+		
+		if (a.getBase() != b.getBase()) {
+			throw new IllegalArgumentException("Both numbers have to be represented in the same base.");
+		}
+		
+		int base = a.getBase();
+		
+
+		
+		
+		
+		int signA = a.isNegative() ? -1 : 1, signB = b.isNegative() ? -1 : 1; 
+		int resultSign = signA * signB;
+		
+		
+		if(a.isNegative()) 
+			a.flipSign();
+		if(b.isNegative())
+			b.flipSign();
+		
+		// Recursive base
+		if(a.getLength() == 1 && b.getLength() == 1){
+			int product = a.getWords()[0] *b.getWords()[0];
+			mul++;
+			if(product >= base){
+				int[] prodwords = new int[2];
+				prodwords[0] = product % base;
+				prodwords[1] = product / base;
+				return new Number(base, prodwords, resultSign == -1);
+			}else{
+				int[] prodwords = {product};
+				return new Number(base, prodwords, resultSign == -1);
+			}
+		}
+		
+		// Recursive step
+		
+			//First make the numbers even and equal length..
+		int length = Math.max(a.getLength(), b.getLength());
+		if(isOdd(length))
+			length++;
+		int[] wordsa = a.getWords(length);
+		int[] wordsb = b.getWords(length);
+		
+		//get Ahi, Alo, Bhi, Blo
+		Number Alo = new Number(base, Arrays.copyOfRange(wordsa, 0, length/2), false);
+		Number Ahi = new Number(base, Arrays.copyOfRange(wordsa, length/2, length), false);;
+		Number Blo = new Number(base, Arrays.copyOfRange(wordsb, 0, length/2), false);;
+		Number Bhi = new Number(base, Arrays.copyOfRange(wordsb, length/2, length), false);;
+		
+		//Calculate the three parts you need
+		Number AhiBhi = mulKaratsuba(Ahi, Bhi);
+		Number AloBlo = mulKaratsuba(Alo, Blo);
+		Number AhiAloBhiBlo = mulKaratsuba(add(Ahi, Alo), add(Bhi, Blo)); //(Calculates: (Ahi + Alo)*(Bhi+Blo)
+		
+		Number AhiBloPlusAloBhi =  subtract(subtract(AhiAloBhiBlo, AhiBhi), AloBlo); //ahiblo +alobhi = (ahi +alo)(bhi +blo)-ahibhi -aloblo
+		
+		Number AB = add(add(AhiBhi.shiftToLeft(length), AhiBloPlusAloBhi.shiftToLeft(length/2)), AloBlo);
+		
+		return AB;
 	}
 
+	private boolean isOdd(int number){
+		return Math.floorMod(number, 2) == 1;
+	}
+	
 	/**
 	 * Print the statistics of this calculator. Should be called after
 	 * performing a calculation
