@@ -56,7 +56,6 @@ public class Calculator {
 			if (wordsc[n] >= base) {
 				carry = 1;
 				wordsc[n] -= base;
-				sub += 1;
 			}
 		}
 		if (carry > 0) {
@@ -118,7 +117,6 @@ public class Calculator {
 			if (wordsc[n] < 0) {
 				carry = 1;
 				wordsc[n] += base;
-				add += 1;
 			}
 		}
 		return new Number(base, wordsc, false);
