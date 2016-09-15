@@ -4,10 +4,14 @@ import java.util.Arrays;
 
 public class Calculator {
 
-	private int add, sub, mul;
+	private int add;
+	private int sub;
+	private int mul;
 
 	public Calculator() {
-		add = sub = mul = 0;
+		add = 0;
+		sub = 0;
+		mul = 0;
 	}
 
 	/**
@@ -37,7 +41,15 @@ public class Calculator {
 			// a + b = a - -b
 			return this.subtract(a, b.flipSign());
 		}
-
+		
+		// ignore zeroes
+		if (a.getLength() == 1 && a.getWords()[0] == 0) {
+			return b;
+		}
+		if (b.getLength() == 1 && b.getWords()[0] == 0) {
+			return a;
+		}
+		
 		// addition of positive integers
 		int base = a.getBase();
 		int length = Math.max(a.getLength(), b.getLength());
@@ -98,7 +110,15 @@ public class Calculator {
 			// a - b = -(b - a)
 			return this.subtract(b, a).flipSign();
 		}
-
+		
+		// ignore zeroes
+		if (a.getLength() == 1 && a.getWords()[0] == 0) {
+			return b.flipSign();
+		}
+		if (b.getLength() == 1 && b.getWords()[0] == 0) {
+			return a;
+		}
+		
 		// normal subtraction (a > b, a and b non-negative)
 		int base = a.getBase();
 		int length = Math.max(a.getLength(), b.getLength());
@@ -133,9 +153,6 @@ public class Calculator {
 	 * @return The answer of the product a * b
 	 */
 	public Number mulPrimarySchool(Number a, Number b) {
-		int subresults = a.getLength() * b.getLength();
-		mul += subresults;
-		add += subresults;
 		return Number.fromString(a.getBase(), "0");
 	}
 
@@ -149,20 +166,19 @@ public class Calculator {
 	 * @return The answer of the product a * b
 	 */
 	public Number mulKaratsuba(Number a, Number b) {
-
+		
 		if (a.getBase() != b.getBase()) {
 			throw new IllegalArgumentException("Both numbers have to be represented in the same base.");
 		}
 
 		int base = a.getBase();
-
-		int signA = a.isNegative() ? -1 : 1, signB = b.isNegative() ? -1 : 1;
-		int resultSign = signA * signB;
+		
+		boolean resultNegative = a.isNegative() ^ b.isNegative();
 
 		if (a.isNegative())
-			a.flipSign();
+			a = a.flipSign();
 		if (b.isNegative())
-			b.flipSign();
+			b = b.flipSign();
 
 		// Recursive base
 		if (a.getLength() == 1 && b.getLength() == 1) {
@@ -172,10 +188,10 @@ public class Calculator {
 				int[] prodwords = new int[2];
 				prodwords[0] = product % base;
 				prodwords[1] = product / base;
-				return new Number(base, prodwords, resultSign == -1);
+				return new Number(base, prodwords, resultNegative);
 			} else {
 				int[] prodwords = { product };
-				return new Number(base, prodwords, resultSign == -1);
+				return new Number(base, prodwords, resultNegative);
 			}
 		}
 
@@ -183,8 +199,9 @@ public class Calculator {
 
 		// First make the numbers even and equal length..
 		int length = Math.max(a.getLength(), b.getLength());
-		if (isOdd(length))
+		if (length % 2 == 1) {
 			length++;
+		}
 		int[] wordsa = a.getWords(length);
 		int[] wordsb = b.getWords(length);
 
@@ -204,14 +221,10 @@ public class Calculator {
 		Number AhiBloPlusAloBhi = subtract(subtract(AhiAloBhiBlo, AhiBhi), AloBlo);
 		Number AB = add(add(AhiBhi.shiftToLeft(length), AhiBloPlusAloBhi.shiftToLeft(length / 2)), AloBlo);
 		
-		if (resultSign < 0) {
+		if (resultNegative) {
 			return AB.flipSign();
 		}
 		return AB;
-	}
-
-	private boolean isOdd(int number) {
-		return Math.floorMod(number, 2) == 1;
 	}
 
 	/**
@@ -219,9 +232,11 @@ public class Calculator {
 	 * performing a calculation
 	 */
 	public void printStats() {
-		System.out.println("Elementary additions:       " + add);
-		System.out.println("Elementary subtractions:    " + sub);
-		System.out.println("Elementary multiplications: " + mul);
+		System.out.println("Number of elementary operations");
+		System.out.println("  Elementary additions:       " + String.format("%1$9s", add));
+		System.out.println("  Elementary subtractions:    " + String.format("%1$9s", sub));
+		System.out.println("  Elementary multiplications: " + String.format("%1$9s", mul));
+		System.out.println("  Total elem. operations:     " + String.format("%1$9s", (add + sub + mul)));
 	}
 
 	/**

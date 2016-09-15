@@ -1,5 +1,6 @@
 package main;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Runner {
@@ -73,7 +74,7 @@ public class Runner {
 			int totPr = addPr + subPr + mulPr;
 			
 			calc.resetStats();
-			calc.mulKaratsuba(a, b);
+			c = calc.mulKaratsuba(a, b);
 			
 			int addKa = calc.getAdd();
 			int subKa = calc.getSub();
@@ -108,7 +109,7 @@ public class Runner {
 		String choice;
 		boolean valid = false;
 
-		do {
+		do {			
 			System.out.println("Your choice: [1-4,q]");
 			choice = scanner.next().substring(0, 1).toLowerCase();
 			if (choice.equals("1") || choice.equals("2") || choice.equals("3") || choice.equals("4")
@@ -161,19 +162,32 @@ public class Runner {
 	 * @return Decimal value of the input read from command line
 	 */
 	private int getBase(Scanner scanner) {
-		int base;
-		boolean valid = false;
+		int base = 0;
+		boolean valid = true;
 
 		System.out.println();
 		System.out.println("Enter the base of the numbers you will be entering:");
 		System.out.println("Base: [2-16]");
 		do {
-			base = scanner.nextInt();
+			if (!valid) {
+				System.out.println("Enter an integer base between 2 and 16, inclusive.");
+			} else {
+				valid = false;
+			}
+			
+			try {
+				base = scanner.nextInt();
+			} catch (InputMismatchException e) {
+				valid = false;
+				if (scanner.hasNext()) {
+					scanner.next();
+				}
+				continue;
+			}
 			if (base >= 2 && base <= 16) {
 				valid = true;
 				break;
 			}
-			System.out.println("Enter an integer base between 2 and 16, inclusive.");
 		} while (!valid);
 
 		return base;
