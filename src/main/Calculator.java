@@ -168,7 +168,7 @@ public class Calculator {
 		int[][] subresult = new int[a.getLength()][2 * length];
 		int prelres = 0;
 
-		
+		//Find the sign of the result
 		boolean resultSign = a.isNegative() ^ b.isNegative();
 
 		if (a.isNegative()) 
@@ -176,6 +176,7 @@ public class Calculator {
 		if (b.isNegative())
 			b = b.flipSign();
 
+		//The primary school multiplication (multiplying digit by digit and putting each subresult in a matrix)
 		int carrier = 0;
 		for (int i = 0; i < b.getLength(); i++) {
 			carrier = 0;
@@ -198,6 +199,7 @@ public class Calculator {
 			}
 		}
 
+		//The addition column by column for the final result
 		for (int i = 2 * length - 1; i >= 0; i--) {
 			for (int j = 0; j < b.getLength(); j++) {
 				if (subresult[j][i] != 0) {
@@ -208,6 +210,7 @@ public class Calculator {
 		}
 		carrier = 0;
 
+		//Making sure that each "digit" of the result isn't equal to or greater than the base (the carries for the result)
 		for (int i = 0; i < 2 * length; i++) {
 			if (carrier != 0) {
 				transfer[i] = transfer[i] + carrier;
@@ -221,6 +224,7 @@ public class Calculator {
 			}
 		}
 		
+		//The final result (represented in the proper base)
 		return new Number(base, transfer, resultSign);
 	}
 
