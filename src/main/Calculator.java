@@ -142,21 +142,6 @@ public class Calculator {
 		return new Number(base, wordsc, false);
 	}
 
-	public Number mulPrimarySchool2(Number a, Number b) {
-		if (a.getBase() != b.getBase()) {
-			throw new IllegalArgumentException("Both numbers have to be represented in the same base.");
-		}
-
-		int base = a.getBase();
-		int length = Math.max(a.getLength(), b.getLength());
-
-		int[] wordsa = a.getWords(length);
-		int[] wordsb = b.getWords(length);
-		int[] wordsc = new int[length * 2 + 1];
-		
-		return null;
-	}
-
 	/**
 	 * Calculates the product of the input numbers using the primary school
 	 * method

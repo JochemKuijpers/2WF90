@@ -74,12 +74,16 @@ public class Runner {
 			int totPr = addPr + subPr + mulPr;
 			
 			calc.resetStats();
-			c = calc.mulKaratsuba(a, b);
+			Number d = calc.mulKaratsuba(a, b);
 			
 			int addKa = calc.getAdd();
 			int subKa = calc.getSub();
 			int mulKa = calc.getMul();
 			int totKa = addKa + subKa + mulKa;
+			
+			System.out.println("Answer Pr.School: " + c + " (base " + base + ")");
+			System.out.println("Answer Karatsuba: " + d + " (base " + base + ")");
+			System.out.println();
 			
 			System.out.println("     Pr.School | Karatsuba | Difference\r\n"
 					+ String.format(" +   %1$9s | %2$9s | %3$9s", addPr, addKa, (addKa - addPr)) + "\r\n"
@@ -87,7 +91,8 @@ public class Runner {
 					+ String.format(" ×   %1$9s | %2$9s | %3$9s", mulPr, mulKa, (mulKa - mulPr)) + "\r\n"
 					+ String.format(" tot %1$9s | %2$9s | %3$9s", totPr, totKa, (totKa - totPr)) + "\r\n");
 			
-			break;
+			scanner.close();
+			return;
 		default:
 			throw new IllegalStateException("Unknown choice: " + choice);
 		}
