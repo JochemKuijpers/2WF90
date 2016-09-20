@@ -153,7 +153,77 @@ public class Calculator {
 	 * @return The answer of the product a * b
 	 */
 	public Number mulPrimarySchool(Number a, Number b) {
-		return Number.fromString(a.getBase(), "0");
+		int base = a.getBase();
+		int maxLength = Math.max(a.getLength(), b.getLength());
+		if(a.getLength() < b.getLength()){
+			Number c = a;
+			a = b;
+			b = c;
+		}
+		int[] transfer = new int[2 * maxLength];
+		int[][] subresult = new int[a.getLength()][2 * maxLength];
+		int prelres = 0;
+
+		if (a.getBase() != b.getBase()) {
+			throw new IllegalArgumentException("Both numbers have to be represented in the same base.");
+		}
+
+		int signA = a.isNegative() ? -1 : 1, signB = b.isNegative() ? -1 : 1;
+		int resultSign = signA * signB;
+
+		if (a.isNegative())
+			a.flipSign();
+		if (b.isNegative())
+			b.flipSign();
+
+		int carrier = 0;
+		for (int i = 0; i < b.getLength(); i++) {
+			carrier = 0;
+			int t = 0;
+			for (int j = 0; j < a.getLength(); j++) {
+				prelres = a.getWords()[j] * b.getWords()[i] + carrier;
+				mul++;
+				if (carrier != 0)
+					add++;
+				subresult[i][2*maxLength - 1 - i - j] = prelres % base;
+				carrier = prelres / base;
+				t = j;
+			}
+			if(carrier != 0 && (2 * maxLength) > 2 ) {
+				subresult[i][2 * maxLength - 2 - i - t] = carrier;
+			}
+			else if(carrier != 0 && (2 * maxLength) == 2){
+				subresult[i][0] = carrier;
+			}
+		}
+
+		for(int i = 2 * maxLength - 1; i >= 0; i--){
+			for(int j = 0; j < b.getLength(); j++){
+				if(transfer[2 * maxLength - 1 - i] != 0 && subresult[j][i] != 0){
+					add++;
+				}
+				transfer[2 * maxLength - 1 - i] += subresult[j][i];
+			}
+		}
+		carrier = 0;
+
+		for(int i = 0; i < 2 * maxLength; i++){
+			if(carrier != 0 && transfer[i] != 0){
+				add++;
+			}
+			transfer[i] = transfer[i] + carrier;
+			if(transfer[i] >= base) {
+				carrier = transfer[i] / base;
+				transfer[i] = transfer[i] % base;
+			}
+			else{
+				carrier = 0;
+			}
+		}
+
+		if(resultSign < 0)
+			return new Number(base, transfer, true);
+		return new Number(base, transfer, false);
 	}
 
 	/**
