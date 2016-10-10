@@ -4,9 +4,9 @@ import java.util.Arrays;
 
 public class Calculator {
 
-	private int add;
-	private int sub;
-	private int mul;
+	private long add;
+	private long sub;
+	private long mul;
 
 	public Calculator() {
 		add = 0;
@@ -41,7 +41,7 @@ public class Calculator {
 			// a + b = a - -b
 			return this.subtract(a, b.flipSign());
 		}
-		
+
 		// ignore zeroes
 		if (a.getLength() == 1 && a.getWords()[0] == 0) {
 			return b;
@@ -49,7 +49,7 @@ public class Calculator {
 		if (b.getLength() == 1 && b.getWords()[0] == 0) {
 			return a;
 		}
-		
+
 		// addition of positive integers
 		int base = a.getBase();
 		int length = Math.max(a.getLength(), b.getLength());
@@ -111,7 +111,7 @@ public class Calculator {
 			// a - b = -(b - a)
 			return this.subtract(b, a).flipSign();
 		}
-		
+
 		// ignore zeroes
 		if (a.getLength() == 1 && a.getWords()[0] == 0) {
 			return b.flipSign();
@@ -119,7 +119,7 @@ public class Calculator {
 		if (b.getLength() == 1 && b.getWords()[0] == 0) {
 			return a;
 		}
-		
+
 		// normal subtraction (a > b, a and b non-negative)
 		int base = a.getBase();
 		int length = Math.max(a.getLength(), b.getLength());
@@ -154,77 +154,81 @@ public class Calculator {
 	 * @return The answer of the product a * b
 	 */
 	public Number mulPrimarySchool(Number a, Number b) {
-		int base = a.getBase();
-		int maxLength = Math.max(a.getLength(), b.getLength());
-		if(a.getLength() < b.getLength()){
-			Number c = a;
-			a = b;
-			b = c;
-		}
-		int[] transfer = new int[2 * maxLength];
-		int[][] subresult = new int[a.getLength()][2 * maxLength];
-		int prelres = 0;
-
 		if (a.getBase() != b.getBase()) {
 			throw new IllegalArgumentException("Both numbers have to be represented in the same base.");
 		}
 
-		int signA = a.isNegative() ? -1 : 1, signB = b.isNegative() ? -1 : 1;
-		int resultSign = signA * signB;
+		int base = a.getBase();
+		int length = Math.max(a.getLength(), b.getLength());
+		if (a.getLength() < b.getLength()) {
+			Number t = a;
+			a = b;
+			b = t;
+		}
+		int[] transfer = new int[2 * length];
+		int[][] subresult = new int[a.getLength()][2 * length];
+		int prelres = 0;
+
+		// Find the sign of the result
+		boolean resultSign = a.isNegative() ^ b.isNegative();
 
 		if (a.isNegative())
-			a.flipSign();
+			a = a.flipSign();
 		if (b.isNegative())
-			b.flipSign();
+			b = b.flipSign();
 
+		// The primary school multiplication (multiplying digit by digit and
+		// putting each subresult in a matrix)
 		int carrier = 0;
 		for (int i = 0; i < b.getLength(); i++) {
 			carrier = 0;
 			int t = 0;
 			for (int j = 0; j < a.getLength(); j++) {
-				prelres = a.getWords()[j] * b.getWords()[i] + carrier;
+				prelres = a.getWords()[j] * b.getWords()[i];
 				mul++;
-				if (carrier != 0)
+				if (carrier != 0) {
+					prelres += carrier;
 					add++;
-				subresult[i][2*maxLength - 1 - i - j] = prelres % base;
+				}
+				subresult[i][2 * length - 1 - i - j] = prelres % base;
 				carrier = prelres / base;
 				t = j;
 			}
-			if(carrier != 0 && (2 * maxLength) > 2 ) {
-				subresult[i][2 * maxLength - 2 - i - t] = carrier;
-			}
-			else if(carrier != 0 && (2 * maxLength) == 2){
+			if (carrier != 0 && (2 * length) > 2) {
+				subresult[i][2 * length - 2 - i - t] = carrier;
+			} else if (carrier != 0 && (2 * length) == 2) {
 				subresult[i][0] = carrier;
 			}
 		}
 
-		for(int i = 2 * maxLength - 1; i >= 0; i--){
-			for(int j = 0; j < b.getLength(); j++){
-				if(transfer[2 * maxLength - 1 - i] != 0 && subresult[j][i] != 0){
+		// The addition column by column for the final result
+		for (int i = 2 * length - 1; i >= 0; i--) {
+			for (int j = 0; j < b.getLength(); j++) {
+				if (subresult[j][i] != 0) {
+					transfer[2 * length - 1 - i] += subresult[j][i];
 					add++;
 				}
-				transfer[2 * maxLength - 1 - i] += subresult[j][i];
 			}
 		}
 		carrier = 0;
 
-		for(int i = 0; i < 2 * maxLength; i++){
-			if(carrier != 0 && transfer[i] != 0){
+		// Making sure that each "digit" of the result isn't equal to or greater
+		// than the base (the carries for the result)
+		for (int i = 0; i < 2 * length; i++) {
+			if (carrier != 0) {
+				transfer[i] = transfer[i] + carrier;
 				add++;
 			}
-			transfer[i] = transfer[i] + carrier;
-			if(transfer[i] >= base) {
+			if (transfer[i] >= base) {
 				carrier = transfer[i] / base;
 				transfer[i] = transfer[i] % base;
-			}
-			else{
+			} else {
 				carrier = 0;
 			}
 		}
 
-		if(resultSign < 0)
-			return new Number(base, transfer, true);
-		return new Number(base, transfer, false);
+		// The final result (represented in the proper base)
+		return new Number(base, transfer, resultSign);
 	}
 
 	/**
@@ -237,13 +241,13 @@ public class Calculator {
 	 * @return The answer of the product a * b
 	 */
 	public Number mulKaratsuba(Number a, Number b) {
-		
+
 		if (a.getBase() != b.getBase()) {
 			throw new IllegalArgumentException("Both numbers have to be represented in the same base.");
 		}
 
 		int base = a.getBase();
-		
+
 		boolean resultNegative = a.isNegative() ^ b.isNegative();
 
 		if (a.isNegative())
@@ -286,12 +290,12 @@ public class Calculator {
 		Number AhiBhi = mulKaratsuba(Ahi, Bhi);
 		Number AloBlo = mulKaratsuba(Alo, Blo);
 		// Calculates: (Ahi + Alo) * (Bhi + Blo)
-		Number AhiAloBhiBlo = mulKaratsuba(add(Ahi, Alo), add(Bhi, Blo)); 
+		Number AhiAloBhiBlo = mulKaratsuba(add(Ahi, Alo), add(Bhi, Blo));
 
 		// ahiblo + alobhi = (ahi + alo) * (bhi + blo) - ahibhi - aloblo
 		Number AhiBloPlusAloBhi = subtract(subtract(AhiAloBhiBlo, AhiBhi), AloBlo);
 		Number AB = add(add(AhiBhi.shiftToLeft(length), AhiBloPlusAloBhi.shiftToLeft(length / 2)), AloBlo);
-		
+
 		if (resultNegative) {
 			return AB.flipSign();
 		}
@@ -319,17 +323,16 @@ public class Calculator {
 		mul = 0;
 	}
 
-	public int getAdd() {
+	public long getAdd() {
 		return add;
 	}
 
-	public int getSub() {
+	public long getSub() {
 		return sub;
 	}
 
-	public int getMul() {
+	public long getMul() {
 		return mul;
 	}
-	
-	
+
 }

@@ -68,26 +68,47 @@ public class Runner {
 			System.out.println(a + " × " + b + " (base " + base + ") compare multiplication methods");
 			c = calc.mulPrimarySchool(a, b);
 			
-			int addPr = calc.getAdd();
-			int subPr = calc.getSub();
-			int mulPr = calc.getMul();
-			int totPr = addPr + subPr + mulPr;
+			int length = Math.max(a.getLength(), b.getLength());
+			
+			long addPr = calc.getAdd();
+			long subPr = calc.getSub();
+			long mulPr = calc.getMul();
+			long totPr = addPr + subPr + mulPr;
+			
+			double lgMulPr = Math.log(mulPr) / Math.log(length);
 			
 			calc.resetStats();
-			c = calc.mulKaratsuba(a, b);
+			Number d = calc.mulKaratsuba(a, b);
 			
-			int addKa = calc.getAdd();
-			int subKa = calc.getSub();
-			int mulKa = calc.getMul();
-			int totKa = addKa + subKa + mulKa;
+			long addKa = calc.getAdd();
+			long subKa = calc.getSub();
+			long mulKa = calc.getMul();
+			long totKa = addKa + subKa + mulKa;
 			
-			System.out.println("     Pr.School | Karatsuba | Difference\r\n"
-					+ String.format(" +   %1$9s | %2$9s | %3$9s", addPr, addKa, (addKa - addPr)) + "\r\n"
-					+ String.format(" -   %1$9s | %2$9s | %3$9s", subPr, subKa, (subKa - subPr)) + "\r\n"
-					+ String.format(" ×   %1$9s | %2$9s | %3$9s", mulPr, mulKa, (mulKa - mulPr)) + "\r\n"
-					+ String.format(" tot %1$9s | %2$9s | %3$9s", totPr, totKa, (totKa - totPr)) + "\r\n");
+			double lgMulKa = Math.log(mulKa) / Math.log(length);
 			
-			break;
+			double addPc = Math.round(((addKa - addPr) / (double) addPr) * 10000)/100;
+			double subPc = Math.round(((subKa - subPr) / (double) subPr) * 10000)/100;
+			double mulPc = Math.round(((mulKa - mulPr) / (double) mulPr) * 10000)/100;
+			double totPc = Math.round(((totKa - totPr) / (double) totPr) * 10000)/100;
+			
+			System.out.println("Answer Pr.School: " + c + " (base " + base + ")");
+			System.out.println("Answer Karatsuba: " + d + " (base " + base + ")");
+			System.out.println();
+			
+			System.out.println("     Pr.School       | Karatsuba       | Difference      | Percent increase\r\n"
+					+ String.format(" +   %1$15s | %2$15s | %3$15s | ", addPr, addKa, (addKa - addPr)) + addPc + " % \r\n"
+					+ String.format(" -   %1$15s | %2$15s | %3$15s | ", subPr, subKa, (subKa - subPr)) + "N/A \r\n"
+					+ String.format(" ×   %1$15s | %2$15s | %3$15s | ", mulPr, mulKa, (mulKa - mulPr)) + mulPc + " % \r\n"
+					+ String.format(" tot %1$15s | %2$15s | %3$15s | ", totPr, totKa, (totKa - totPr)) + totPc + " % \r\n");
+			
+			System.out.println();
+			System.out.println("length (n): " + length);
+			System.out.println("Pr.School took n^" + lgMulPr + " elementary multiplications");
+			System.out.println("Karatsuba took n^" + lgMulKa + " elementary multiplications");
+			
+			scanner.close();
+			return;
 		default:
 			throw new IllegalStateException("Unknown choice: " + choice);
 		}
