@@ -87,6 +87,7 @@ public class Calculator {
 	 * @return The subtraction a - b
 	 */
 	public Number subtract(Number a, Number b) {
+		System.out.println(a.toString() + "-" + b.toString());
 		if (a.getBase() != b.getBase()) {
 			throw new IllegalArgumentException("Both numbers have to be represented in the same base.");
 		}
