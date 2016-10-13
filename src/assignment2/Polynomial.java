@@ -23,6 +23,20 @@ public class Polynomial {
 	}
 
 	/**
+	 * Constructs Polynomial from arraylist of coefficients
+	 * 
+	 * @param c
+	 *            Coefficients
+	 * @param m
+	 *            Modulus
+	 */
+	public Polynomial(ArrayList<IntegerMod> c, int m) {
+	
+		mod = m;
+		coefficients = c;
+	}
+
+	/**
 	 * A subclass containing division results quot and rem, the quotient and
 	 * remainder of the division
 	 * Used from last year by Jochem Kuijpers
@@ -73,20 +87,6 @@ public class Polynomial {
 		}
 	}
 
-	/**
-	 * Constructs Polynomial from arraylist of coefficients
-	 * 
-	 * @param c
-	 *            Coefficients
-	 * @param m
-	 *            Modulus
-	 */
-	public Polynomial(ArrayList<IntegerMod> c, int m) {
-
-		mod = m;
-		coefficients = c;
-	}
-
 	public int getMod() {
 		return mod;
 	}
@@ -129,5 +129,50 @@ public class Polynomial {
 	 */
 	public Polynomial product(Polynomial x) {
 		return null;
+	}
+	
+	/**
+	 * 
+	 * @param b		the polynomial to divide by
+	 * @return		(quot,rem) such that (this == quot * b + rem)
+	 */
+	public Polynomial.DivisionResult divide(Polynomial b) {
+
+		return null;
+	}
+	
+	/**
+	 * Calculates the greatest common divider of polynomials this and other
+	 * via the Extended Euclidean Algorithm (1.2.11)
+	 * 
+	 * @param other	the other polynomial
+	 * @return		gcd, x and y such that this * x + other * y = gcd
+	 */
+	public Polynomial.ExtEuclideanResult gcd(Polynomial other) {
+		
+		
+		return null;
+	}
+	
+	/**
+	 * Checks if polyonomial x is equal to this polynomial
+	 * @param x
+	 * @return equality of the input and this polynomial
+	 */
+	public boolean equals(Polynomial x){
+		
+		return false;
+	}
+	
+	/**
+	 * Used to get a 1 polynomial in an easy way.a
+	 * @param m
+	 * @return The 1 polynomial, with modulus m
+	 */
+	public static Polynomial ONE(int m){
+		ArrayList<IntegerMod> o = new ArrayList<IntegerMod>();
+		o.add(new IntegerMod(1, m));
+		Polynomial one = new Polynomial(o, m);
+		return one;
 	}
 }
