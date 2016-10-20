@@ -298,8 +298,20 @@ public class Polynomial {
 	 * @return equality of the input and this polynomial
 	 */
 	public boolean equals(Polynomial x){
-		
-		return false;
+		ArrayList<IntegerMod> a, b;
+		a = this.coefficients;
+		b = x.coefficients;
+
+		if (a.size() != b.size())
+			return false;
+		else{
+			for(int i = 0; i < a.size(); i++){
+				if (a.get(i).getValue() != b.get(i).getValue()){
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	/**
