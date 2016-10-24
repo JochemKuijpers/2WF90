@@ -339,4 +339,31 @@ public class Polynomial {
 		return zero;
 	}
 
+	public int getDegree(){
+		for(int i = coefficients.size() - 1; i >= 0; i--){
+			if(coefficients.get(i).getValue() != 0){
+				return i +1;
+			}
+		}
+		
+		return 0;
+	}
+	
+	public IntegerMod getCoefficient(int x){
+		if(x >= coefficients.size()){
+			throw new IllegalArgumentException("The coefficient with degree " + x + " can not be found"); 
+		}else{
+			
+			return coefficients.get(x);
+		}
+		
+	}
+	
+	public String toString(){
+		String r = "";
+		for(int i = coefficients.size() - 1; i >= 0 ; i--){
+			r += " " + coefficients.get(i).getValue();
+		}
+		return r;
+	}
 }
