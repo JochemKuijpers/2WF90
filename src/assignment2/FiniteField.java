@@ -120,6 +120,11 @@ public class FiniteField {
 		return null;
 	}
 	
+	/**
+	 * Outputs the 'addition table' of this finite field. 
+	 * It will output a list of all possible sums
+	 * @return
+	 */
 	public String getAdditionTable(){
 		ArrayList<Polynomial> x = getAllElements();
 		Polynomial y,z;
@@ -135,6 +140,11 @@ public class FiniteField {
 		return out;
 	}
 	
+	/**
+	 * Outputs the 'multiplication table' of this finite field. 
+	 * It will output a list of all possible products
+	 * @return
+	 */
 	public String getMultiplicationTable(){
 		ArrayList<Polynomial> x = getAllElements();
 		Polynomial y,z;
