@@ -48,13 +48,14 @@ public class FiniteField {
 		
 		//Base case
 		if(i == 0){
+			ArrayList<IntegerMod> backUpCopyPrevc = new ArrayList<IntegerMod>(copyPrevc);
 			for(int j = 0; j < p; j++){
+				copyPrevc = new ArrayList<IntegerMod>(backUpCopyPrevc);
 				copyPrevc.set(0, new IntegerMod(j, p));
 				Polynomial newP = new Polynomial(copyPrevc, p);
-				System.out.println("Testing " + newP);
 				if( !listContainsPolynomial(newP, list)){
 					list.add(newP);
-					System.out.println("It got IN!!!");
+					System.out.println("Added: " + newP.toString());
 				}
 			}
 		}else{ //Step case
