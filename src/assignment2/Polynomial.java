@@ -360,10 +360,18 @@ public class Polynomial {
 	}
 	
 	public String toString(){
-		String r = "";
+		String r = "[";
+		boolean f = true;
 		for(int i = coefficients.size() - 1; i >= 0 ; i--){
-			r += " " + coefficients.get(i).getValue();
+			if(!f){
+				r += " ";
+			}else{
+				f = false;
+			}
+			r += coefficients.get(i).getValue();
 		}
+		
+		r += "]";
 		return r;
 	}
 }

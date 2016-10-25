@@ -17,6 +17,10 @@ public class FiniteField {
 		this.p = p;
 	}
 	
+	/**
+	 * Function that creates all elements in this field. Uses a recursive function
+	 * @return
+	 */
 	public ArrayList<Polynomial> getAllElements(){
 		ArrayList<Polynomial> o = new ArrayList<Polynomial>();
 		int deg = q.getDegree();
@@ -24,13 +28,8 @@ public class FiniteField {
 		for(int z = 0; z < q.getDegree(); z++){
 			c.add(z, new IntegerMod(0, p));
 		}
-		
-		
-		
-		
-		
-		
-		return getAllElementsRecursive(o, c, q.getDegree()-1);
+	
+		return getAllElementsRecursive(o, c, q.getDegree()-2);
 	}
 	
 	/**
@@ -55,7 +54,6 @@ public class FiniteField {
 				Polynomial newP = new Polynomial(copyPrevc, p);
 				if( !listContainsPolynomial(newP, list)){
 					list.add(newP);
-					System.out.println("Added: " + newP.toString());
 				}
 			}
 		}else{ //Step case
@@ -104,7 +102,7 @@ public class FiniteField {
 	}
 	
 	private Polynomial reduce(Polynomial x){
-		return null;
+		return x;
 	}
 	
 	public boolean primitive(Polynomial x){
@@ -122,6 +120,35 @@ public class FiniteField {
 		return null;
 	}
 	
+	public String getAdditionTable(){
+		ArrayList<Polynomial> x = getAllElements();
+		Polynomial y,z;
+		String out = "";
+		
+		for(int i = 0; i < x.size(); i++){
+			y = x.get(i);
+			for(int j = 0; j < x.size(); j++){
+				z = x.get(j);
+				out += (y.toString() + " + " + z.toString() + " = " + sum(y,z) + "\n");	
+			}
+		}
+		return out;
+	}
+	
+	public String getMultiplicationTable(){
+		ArrayList<Polynomial> x = getAllElements();
+		Polynomial y,z;
+		String out = "";
+		
+		for(int i = 0; i < x.size(); i++){
+			y = x.get(i);
+			for(int j = 0; j < x.size(); j++){
+				z = x.get(j);
+				out += (y.toString() + " * " + z.toString() + " = " + product(y,z) + "\n");	
+			}
+		}
+		return out;
+	}
 	/**
 	 * Checks if list l conatins polynomial z 
 	 * @param z
