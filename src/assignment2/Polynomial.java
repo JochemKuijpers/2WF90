@@ -6,8 +6,8 @@ public class Polynomial {
 
 	// Coefficients are ordered by significance, ie coefficients[0] = least
 	// significant coefficient
-	private ArrayList<IntegerMod> coefficients;
-	private int mod;
+	public ArrayList<IntegerMod> coefficients;
+	public int mod;
 
 	/**
 	 * Constructs an empty polynomial
@@ -196,24 +196,26 @@ public class Polynomial {
 		IntegerMod coefj = zero.get(0);
 
 		if(a.size() <= b.size()){
-			for(int i = a.size(); i < 2 * b.size(); i++){
+			int size = b.size();
+			for(int i = a.size(); i < 2 * size - 1; i++){
 				a.add(zero.get(0));
 			}
-			for(int i = b.size(); i < 2 * b.size(); i++){
+			for(int i = size; i < 2 * size - 1; i++){
 				b.add(zero.get(0));
 			}
 		}
 		else{
-			for(int i = a.size(); i < 2 * a.size(); i++){
+			int size = a.size();
+			for(int i = size; i < 2 * size - 1; i++){
 				a.add(zero.get(0));
 			}
-			for(int i = b.size(); i < 2 * a.size(); i++){
+			for(int i = b.size(); i < 2 * size - 1; i++){
 				b.add(zero.get(0));
 			}
 		}
-
 		if(a.size() <= b.size()){
-			for(int i = 0; i < 2 * b.size(); i++){
+			int size = b.size();
+			for(int i = 0; i < size; i++){
 				coefj = zero.get(0);
 				for(int j = 0; j <= i; j++) {
 					coefj = coefj.add((a.get(j)).multiply(b.get(i - j)));
@@ -222,7 +224,8 @@ public class Polynomial {
 			}
 		}
 		else{
-			for(int i = 0; i < 2 * a.size(); i++){
+			int size = a.size();
+			for(int i = 0; i < size; i++){
 				coefj = zero.get(0);
 				for(int j = 0; j <= i; j++) {
 					coefj = coefj.add((a.get(j)).multiply(b.get(i - j)));
@@ -232,6 +235,7 @@ public class Polynomial {
 		}
 
 		return new Polynomial(prod, x.mod);
+
 	}
 	
 	/**
