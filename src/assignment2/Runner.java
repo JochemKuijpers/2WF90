@@ -291,7 +291,7 @@ public class Runner {
 		println("    given a prime number and irreducible polynomial.");
 		println(" 5. Calculate sum, product and quotient ab^-1 for two");
 		println("    elements in a given field.");
-		println(" 6. Test irredicubility of an element in a given field and");
+		println(" 6. Test irreducibility of an element in a given field and");
 		println("    generate an irreducible polynomial of a given degree.");
 		println();
 		println(" q. Terminate the program.");
