@@ -99,7 +99,7 @@ public class Runner {
 		// Calculations
 		DivisionResult divResult = new Polynomial(a).divide(new Polynomial(b));
 		ExtEuclideanResult extResult = new Polynomial(a).gcd(new Polynomial(b));
-		
+
 		// Results
 		println("= Results ==================================================");
 		println();
@@ -129,13 +129,13 @@ public class Runner {
 
 		println("Enter the second polynomial.");
 		Polynomial b = inputPolynomial(scanner, prime);
-		
+
 		println("Enter the third polynomial (modulo polynomial).");
 		Polynomial c = inputPolynomial(scanner, prime);
 
 		// Calculations
 		boolean equality = a.equalsModulo(b, c);
-		
+
 		// Results
 		println("= Results ==================================================");
 		println();
@@ -166,15 +166,15 @@ public class Runner {
 		// Calculations
 		String additionTable = field.getAdditionTable();
 		String multiplicationTable = field.getMultiplicationTable();
-		
+
 		// Results
 		println("= Results ==================================================");
 		println();
 		println("Finite Field: " + field.toString());
 		println();
-		println("Addition table (in list form):"); 
+		println("Addition table (in list form):");
 		System.out.println(additionTable);
-		println("Multiplication table (in list form):"); 
+		println("Multiplication table (in list form):");
 		System.out.println(multiplicationTable);
 	}
 
@@ -190,21 +190,25 @@ public class Runner {
 
 		FiniteField field = new FiniteField(prime, q);
 
-		println("Enter the first element from the field " + field.toString() + ".");
+		println("Enter the first element from the field " + field.toString()
+				+ ".");
 		Polynomial a = inputPolynomial(scanner, prime);
-		
-		println("Enter the second element from the field " + field.toString() + ".");
+
+		println("Enter the second element from the field " + field.toString()
+				+ ".");
 		Polynomial b = inputPolynomial(scanner, prime);
-		
+
 		// Calculations
 		Polynomial sum = field.reduce(new Polynomial(a).sum(new Polynomial(b)));
-		Polynomial prod = field.reduce(new Polynomial(a).product(new Polynomial(b)));
+		Polynomial prod = field.reduce(new Polynomial(a)
+				.product(new Polynomial(b)));
 		Polynomial inverseb = field.inverse(new Polynomial(b));
 		Polynomial quot = null;
 		if (inverseb != null) {
-			quot = new Polynomial(a).product(new Polynomial(inverseb));
+			quot = field.reduce(new Polynomial(a).product(new Polynomial(
+					inverseb)));
 		}
-		
+
 		// Results
 		println("= Results ==================================================");
 		println();
@@ -241,14 +245,14 @@ public class Runner {
 
 		println("Enter an element from the field " + field.toString() + ".");
 		Polynomial a = inputPolynomial(scanner, prime);
-		
+
 		println("Enter the degree of the irreducible polynomial to construct.");
 		int degree = inputInteger(scanner);
-		
+
 		// Calculations
 		boolean isIrreducible = field.irreducible(a);
 		Polynomial irreducible = field.createIrreducible(degree);
-		
+
 		// Results
 		println("= Results ==================================================");
 		println();
@@ -326,8 +330,9 @@ public class Runner {
 		ArrayList<IntegerMod> c = new ArrayList<IntegerMod>();
 		boolean valid = false;
 		while (!valid) {
-			println("Enter a string of coefficients modulo " + prime + ", separated by spaces.");
-			
+			println("Enter a string of coefficients modulo " + prime
+					+ ", separated by spaces.");
+
 			String inputString = scanner.nextLine();
 			String[] coefficients = inputString.split(" ");
 			valid = true;
@@ -335,7 +340,8 @@ public class Runner {
 				int coefficient = 0;
 				try {
 					if (coefficientString.trim().length() > 0) {
-						coefficient = Integer.parseInt(coefficientString.trim());
+						coefficient = Integer
+								.parseInt(coefficientString.trim());
 						c.add(new IntegerMod(coefficient, prime));
 					}
 				} catch (NumberFormatException e) {
@@ -346,16 +352,16 @@ public class Runner {
 				}
 			}
 		}
-		
+
 		Collections.reverse(c);
-		
+
 		return new Polynomial(c, prime);
 	}
 
 	private int inputInteger(Scanner scanner) {
 		int x = 0;
 		boolean valid = false;
-		
+
 		while (!valid) {
 			println("Enter an integer:");
 			String inputString = scanner.nextLine();
@@ -374,7 +380,7 @@ public class Runner {
 	private int inputPrime(Scanner scanner) {
 		int x = 0;
 		boolean valid = false;
-		
+
 		while (!valid) {
 			println("Enter a prime integer:");
 			String inputString = scanner.nextLine();
