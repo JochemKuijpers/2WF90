@@ -190,10 +190,10 @@ public class Runner {
 
 		FiniteField field = new FiniteField(prime, q);
 
-		println("Enter the first element from the field " + field.toString());
+		println("Enter the first element from the field " + field.toString() + ".");
 		Polynomial a = inputPolynomial(scanner, prime);
 		
-		println("Enter the second element from the field " + field.toString());
+		println("Enter the second element from the field " + field.toString() + ".");
 		Polynomial b = inputPolynomial(scanner, prime);
 		
 		// Calculations
@@ -229,8 +229,41 @@ public class Runner {
 
 	private void doFiniteFieldIrreducibility(Scanner scanner) {
 		println("= 6. Finite Fields Irreducibility ==========================");
+		println();
+
+		println("Enter the prime number.");
+		int prime = inputPrime(scanner);
+
+		println("Enter an irreducible polynomial.");
+		Polynomial q = inputPolynomial(scanner, prime);
+
+		FiniteField field = new FiniteField(prime, q);
+
+		println("Enter an element from the field " + field.toString() + ".");
+		Polynomial a = inputPolynomial(scanner, prime);
 		
-		// TODO.
+		println("Enter the degree of the irreducible polynomial to construct.");
+		int degree = inputInteger(scanner);
+		
+		// Calculations
+		boolean isIrreducible = field.irreducible(a);
+		Polynomial irreducible = field.createIrreducible(degree);
+		
+		// Results
+		println("= Results ==================================================");
+		println();
+		println("Finite Field: " + field.toString());
+		println();
+		println("element a(X) = " + a.toString());
+		println();
+		if (isIrreducible) {
+			println("a is IRREDUCIBLE.");
+		} else {
+			println("a is NOT IRREDUCIBLE (reducible).");
+		}
+		println();
+		println("Generated irreducible polynomial of degree " + degree + ":");
+		println("i(X) = " + irreducible.toString());
 	}
 
 	private void printHeader() {

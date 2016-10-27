@@ -111,32 +111,38 @@ public class FiniteField {
 		return div.rem();
 	}
 
-	public boolean primitive(Polynomial x) {
-
-		return false;
-	}
-
+	/**
+	 * Tests for irreducibility. Uses the definition of irreducible polynomials:
+	 * 
+	 * f is only irreducible if deg(f) > 0 and every polynomial g | f has degree
+	 * deg(f) or is a constant.
+	 * 
+	 * @param x
+	 *            polynomial to check
+	 * @return whether or not x is irreducible
+	 */
 	public boolean irreducible(Polynomial x) {
-		Polynomial XqtMinusX;
+		if (x.getDegree() <= 0) {
+			return false;
+		}
 
-		for (int t = 1; t <= q.getDegree(); t += 1) {
-			if (t == q.getDegree()) {
-				return true;
+		ArrayList<Polynomial> allElements = getAllElements();
+		for (Polynomial element : allElements) {
+			// skip constants, we don't care about them.
+			if (element.getDegree() <= 0) {
+				continue;
 			}
-
-			ArrayList<IntegerMod> c = new ArrayList<IntegerMod>();
-			for (int i = 0; i < Math.pow(p, t); i += 1) {
-				c.add(new IntegerMod(0, p));
-			}
-			c.add(new IntegerMod(1, p));
-			XqtMinusX = reduce(new Polynomial(c, p).difference(Polynomial.X(p)));
-
-			if (x.gcd(XqtMinusX).gcd().equals(Polynomial.ONE(p))) {
-				break;
+			if (x.divide(element).rem().equals(Polynomial.ZERO(p))) {
+				// this element divides x
+				if (x.getDegree() != element.getDegree()) {
+					// this element has a degree other than deg(f) or 0
+					// thus x is not irreducible.
+					return false;
+				}
 			}
 		}
 
-		return false;
+		return true;
 	}
 
 	/**
@@ -167,11 +173,7 @@ public class FiniteField {
 			// create a polynomial
 			x = new Polynomial(c, p);
 
-			System.out.println("Created: " + x.toString());
-
 		} while (!irreducible(x));
-
-		System.out.println("Irreducible!");
 
 		// stop if it's irreducible.
 		return x;
@@ -247,7 +249,7 @@ public class FiniteField {
 
 		return false;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Z/" + p + "Z/" + q.toString();
