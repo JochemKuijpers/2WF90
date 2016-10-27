@@ -12,18 +12,12 @@ public class Runner {
 		q.add(new IntegerMod(1, m));
 		Polynomial p = new Polynomial(q, m);
 		// P should now b e x^2 + x + 1
-		q.remove(2);
-		Polynomial p2 = new Polynomial(q, m);
 		
-		System.out.println(p.divide(Polynomial.ONE(m)));
+	
+		FiniteField f = new FiniteField(m, p);
+		//System.out.println("There are " + r.size() + " elements found!");
+		ArrayList<Polynomial> r = f.getAllElements();
 		
-		/*for(int i = 0; i < r.size(); i++){
-			//System.out.println(r.get(i).toString());
-		
-		}
-		
-		System.out.println("There are " + r.size() + " elements found!");
-		
-		System.out.println(f.getMultiplicationTable());*/
+		System.out.println(f.getMultiplicationTable());
 	}
 }

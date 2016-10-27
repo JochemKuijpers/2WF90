@@ -29,7 +29,7 @@ public class FiniteField {
 			c.add(z, new IntegerMod(0, p));
 		}
 	
-		return getAllElementsRecursive(o, c, q.getDegree()-2);
+		return getAllElementsRecursive(o, c, q.getDegree()-1);
 	}
 	
 	/**
@@ -170,7 +170,7 @@ public class FiniteField {
 		
 		for(int i = 0; i < l.size(); i++){
 			a = true;
-			for(int j = 0; j < z.getDegree(); j++){
+			for(int j = 0; j <= z.getDegree(); j++){
 				int c1 = z.getCoefficient(j).getValue();
 				int c2 = l.get(i).getCoefficient(j).getValue();
 				if(c1 != c2){

@@ -101,10 +101,10 @@ public class Polynomial {
 
 	public Polynomial sum(Polynomial x) {
 		ArrayList<IntegerMod> a, b, summ, zero;
-		a = this.coefficients;
-		b = x.coefficients;
+		a = this.getCoefficients();
+		b = x.getCoefficients();
 		summ = new ArrayList<IntegerMod>();
-		zero = ZERO(x.mod).coefficients;
+		zero = ZERO(x.getMod()).getCoefficients();
 
 		if (a.size() <= b.size()){
 			for(int i = 0; i < a.size(); i++){
@@ -124,7 +124,7 @@ public class Polynomial {
 			}
 		}
 
-		return new Polynomial(summ, x.mod);
+		return new Polynomial(summ, x.getMod());
 	}
 
 	/**
@@ -135,16 +135,16 @@ public class Polynomial {
 	 */
 	public Polynomial scalarMultiple(int x) {
 		ArrayList<IntegerMod> a, mult, scal;
-		a = this.coefficients;
+		a = this.getCoefficients();
 		mult = new ArrayList<IntegerMod>();
 		scal = new ArrayList<IntegerMod>();
-		scal.add(new IntegerMod(x, this.mod));
+		scal.add(new IntegerMod(x, this.getMod()));
 
 		for(int i = 0; i < a.size(); i++){
 			mult.add((scal.get(0)).multiply(a.get(i)));
 		}
 
-		return new Polynomial(mult, this.mod);
+		return new Polynomial(mult, this.getMod());
 	}
 
 	/**
@@ -155,10 +155,10 @@ public class Polynomial {
 	 */
 	public Polynomial difference(Polynomial x) {
 		ArrayList<IntegerMod> a, b, diff, zero;
-		a = this.coefficients;
-		b = x.coefficients;
+		a = this.getCoefficients();
+		b = x.getCoefficients();
 		diff = new ArrayList<IntegerMod>();
-		zero = ZERO(x.mod).coefficients;
+		zero = ZERO(x.getMod()).getCoefficients();
 
 		if (a.size() <= b.size()){
 			for(int i = 0; i < a.size(); i++){
@@ -178,7 +178,7 @@ public class Polynomial {
 			}
 		}
 
-		return new Polynomial(diff, x.mod);
+		return new Polynomial(diff, x.getMod());
 	}
 
 	/**
@@ -189,10 +189,10 @@ public class Polynomial {
 	 */
 	public Polynomial product(Polynomial x) {
 		ArrayList<IntegerMod> a, b, prod, zero;
-		a = this.coefficients;
-		b = x.coefficients;
+		a = this.getCoefficients();
+		b = x.getCoefficients();
 		prod = new ArrayList<IntegerMod>();
-		zero = ZERO(x.mod).coefficients;
+		zero = ZERO(x.getMod()).getCoefficients();
 		IntegerMod coefj = zero.get(0);
 
 		if(a.size() <= b.size()){
@@ -233,8 +233,8 @@ public class Polynomial {
 				prod.add(coefj);
 			}
 		}
+		return new Polynomial(prod, x.getMod());
 
-		return new Polynomial(prod, x.mod);
 
 	}
 	
@@ -244,20 +244,24 @@ public class Polynomial {
 	 * @return		(quot,rem) such that (this == quot * b + rem)
 	 */
 	public Polynomial.DivisionResult divide(Polynomial b) {
-		Polynomial q, r, lcDiv;
-		q = ZERO(b.mod);
+		Polynomial q, r;
+		q = ZERO(b.getMod());
 		r = this;
 
-		while (r.coefficients.size() >= b.coefficients.size()){
-			int lcr, lcb;
-			lcr = r.coefficients.get(r.coefficients.size() - 1).getValue();
-			lcb = b.coefficients.get(b.coefficients.size() - 1).getValue();
-			ArrayList<IntegerMod> lc = new ArrayList<IntegerMod>();
-			lc.add(new IntegerMod(lcr / lcb, this.mod));
-			lcDiv = new Polynomial(lc, this.mod);
 
-			q = q.sum(lcDiv);
-			r = r.difference(lcDiv.product(b));
+		while (r.getDegree() >= b.getDegree()){
+			int lcb = b.getCoefficients().get(b.getDegree()).getValue();
+			int lcr = r.getCoefficients().get(r.getDegree()).getValue();
+			int lc = lcr/lcb;
+			int degdiff = (r.getDegree() - b.getDegree());
+			Polynomial xdeg = ZERO(b.getMod());
+			for (int i = 0; i < degdiff - 1; i++)
+				xdeg.getCoefficients().add(new IntegerMod(0, b.getMod()));
+			xdeg.getCoefficients().add(new IntegerMod(1, b.getMod()));
+			if(degdiff == 0)
+				xdeg = ONE(b.getMod());
+			q = q.sum(xdeg.scalarMultiple(lc));
+			r = r.difference((xdeg.scalarMultiple(lc)).product(b));
 		}
 
 		return new Polynomial.DivisionResult(q, r);
@@ -274,13 +278,13 @@ public class Polynomial {
 		Polynomial a, b, x, y, xp, yp, u, v, q, zero;
 		a = this;
 		b = other;
-		zero = ZERO(this.mod);
-		x = ONE(this.mod);
-		v = ONE(this.mod);
+		zero = ZERO(this.getMod());
+		x = ONE(this.getMod());
+		v = ONE(this.getMod());
 		y = zero;
 		u = zero;
 
-		while (b.coefficients.get(b.coefficients.size() - 1) != zero.coefficients.get(0)){
+		while (b.getDegree() != 0){
 			Polynomial.DivisionResult divi = a.divide(b);
 			q = divi.quot;
 			a = b;
@@ -303,8 +307,8 @@ public class Polynomial {
 	 */
 	public boolean equals(Polynomial x){
 		ArrayList<IntegerMod> a, b;
-		a = this.coefficients;
-		b = x.coefficients;
+		a = this.getCoefficients();
+		b = x.getCoefficients();
 
 		if (a.size() != b.size())
 			return false;
@@ -316,6 +320,25 @@ public class Polynomial {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Checks if polyonomial x is equal to this polynomial modulo polynomial y
+	 * @param x, y
+	 * @return equality of the input and polynomial x modulo polynomial y
+	 */
+	public boolean equalsModulo(Polynomial x, Polynomial y){
+		Polynomial a, b, k;
+		a = this;
+		b = x;
+		k = y;
+		Polynomial.DivisionResult equalitycheck;
+
+		equalitycheck = (a.difference(b)).divide(k);
+
+		if(equalitycheck.rem().getCoefficient(equalitycheck.rem().getDegree()).getValue() == 0)
+			return true;
+		return false;
 	}
 	
 	/**
@@ -346,11 +369,27 @@ public class Polynomial {
 	public int getDegree(){
 		for(int i = coefficients.size() - 1; i >= 0; i--){
 			if(coefficients.get(i).getValue() != 0){
-				return i +1;
+				return i;
 			}
 		}
 		
 		return 0;
+	}
+
+	/**
+	 * Give away a copy of the coefficients because we don't want other classes
+	 * to change our coefficients.
+	 * Used from last year by Jochem Kuijpers
+	 * @return ArrayList with coefficients
+	 */
+	public ArrayList<IntegerMod> getCoefficients() {
+		ArrayList<IntegerMod> copy = new ArrayList<IntegerMod>();
+
+		for (IntegerMod a : coefficients) {
+			copy.add(a);
+		}
+
+		return copy;
 	}
 	
 	public IntegerMod getCoefficient(int x){
