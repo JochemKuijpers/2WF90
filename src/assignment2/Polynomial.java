@@ -289,7 +289,7 @@ public class Polynomial {
 		q = ZERO(b.getMod());
 		r = this;
 
-		while (r.getDegree() >= b.getDegree()) {
+		while (r.getDegree() >= b.getDegree() && !r.equals(Polynomial.ZERO(r.mod))) {
 
 			// the leading coefficients of the (current) r and the second
 			// polynomial
@@ -340,26 +340,26 @@ public class Polynomial {
 	public Polynomial.ExtEuclideanResult gcd(Polynomial other) {
 
 		Polynomial a, b, x, y, xp, yp, u, v, q, zero;
-		a = this;
-		b = other;
+		a = new Polynomial(this);
+		b = new Polynomial(other);
 		zero = ZERO(this.getMod());
 		x = ONE(this.getMod());
 		v = ONE(this.getMod());
-		y = zero;
-		u = zero;
+		y = ZERO(this.getMod());;
+		u = ZERO(this.getMod());;
 
 		// the Extended Euclidean Algorithm
-		while (b.getDegree() != 0) {
+		while (!(b.equals(zero))) {
 			Polynomial.DivisionResult divi = a.divide(b);
-			q = divi.quot();
-			a = b;
-			b = divi.rem();
-			xp = x;
-			yp = y;
-			x = u;
-			y = v;
-			u = xp.difference(q.product(u));
-			v = yp.difference(q.product(v));
+			q = new Polynomial(divi.quot());
+			a = new Polynomial(b);
+			b = new Polynomial(divi.rem());
+			xp = new Polynomial(x);
+			yp = new Polynomial(y);
+			x = new Polynomial(u);
+			y = new Polynomial(v);
+			u = new Polynomial(xp.difference(q.product(u)));
+			v = new Polynomial(yp.difference(q.product(v)));
 		}
 
 		// return the result
@@ -513,10 +513,10 @@ public class Polynomial {
 			int c = coefficients.get(i).getValue();
 			if (c > 1) {
 				if (i > 1) {
-					components.add(c + "×X^" + i);					
+					components.add(c + "*X^" + i);					
 				}
 				if (i == 1) {
-					components.add(c + "×X");
+					components.add(c + "*X");
 				}
 				if (i == 0) {
 					components.add(""+c);
